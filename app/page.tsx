@@ -5,8 +5,19 @@ import { TaskForm } from "@/components/task-form"
 import { TaskList } from "@/components/task-list"
 import { TaskStats } from "@/components/task-stats"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 import { CheckSquare, Plus } from "lucide-react"
 
 export interface Task {
@@ -29,11 +40,13 @@ export default function TaskEasyApp() {
     const savedTasks = localStorage.getItem("taskeasy-tasks")
     if (savedTasks) {
       try {
-        const parsedTasks = JSON.parse(savedTasks).map((task: any) => ({
-          ...task,
-          createdAt: new Date(task.createdAt),
-          updatedAt: new Date(task.updatedAt),
-        }))
+        const parsedTasks = (JSON.parse(savedTasks) as Partial<Task>[]).map(
+          (task) => ({
+            ...task,
+            createdAt: new Date(task.createdAt ?? ""),
+            updatedAt: new Date(task.updatedAt ?? ""),
+          })
+        ) as Task[]
         setTasks(parsedTasks)
       } catch (error) {
         console.error("Error loading tasks from localStorage:", error)
@@ -46,7 +59,9 @@ export default function TaskEasyApp() {
     localStorage.setItem("taskeasy-tasks", JSON.stringify(tasks))
   }, [tasks])
 
-  const addTask = (taskData: Omit<Task, "id" | "createdAt" | "updatedAt">) => {
+  const addTask = (
+    taskData: Omit<Task, "id" | "createdAt" | "updatedAt">
+  ) => {
     const newTask: Task = {
       ...taskData,
       id: crypto.randomUUID(),
@@ -57,8 +72,17 @@ export default function TaskEasyApp() {
     setShowForm(false)
   }
 
-  const updateTask = (id: string, taskData: Omit<Task, "id" | "createdAt" | "updatedAt">) => {
-    setTasks((prev) => prev.map((task) => (task.id === id ? { ...task, ...taskData, updatedAt: new Date() } : task)))
+  const updateTask = (
+    id: string,
+    taskData: Omit<Task, "id" | "createdAt" | "updatedAt">
+  ) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id
+          ? { ...task, ...taskData, updatedAt: new Date() }
+          : task
+      )
+    )
     setEditingTask(null)
     setShowForm(false)
   }
@@ -84,7 +108,9 @@ export default function TaskEasyApp() {
   })
 
   const todoTasks = sortedTasks.filter((task) => task.status === "to-do")
-  const inProgressTasks = sortedTasks.filter((task) => task.status === "in-progress")
+  const inProgressTasks = sortedTasks.filter(
+    (task) => task.status === "in-progress"
+  )
   const doneTasks = sortedTasks.filter((task) => task.status === "done")
 
   return (
@@ -96,7 +122,9 @@ export default function TaskEasyApp() {
             <CheckSquare className="h-8 w-8 text-indigo-600" />
             <h1 className="text-4xl font-bold text-gray-900">TaskEasy</h1>
           </div>
-          <p className="text-lg text-gray-600">Lightweight task management for agile teams</p>
+          <p className="text-lg text-gray-600">
+            Lightweight task management for agile teams
+          </p>
         </div>
 
         {/* Stats */}
@@ -111,9 +139,14 @@ export default function TaskEasyApp() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Task Management</CardTitle>
-                    <CardDescription>Create, update, and track your tasks efficiently</CardDescription>
+                    <CardDescription>
+                      Create, update, and track your tasks efficiently
+                    </CardDescription>
                   </div>
-                  <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700">
+                  <Button
+                    onClick={() => setShowForm(!showForm)}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Task
                   </Button>
@@ -122,7 +155,11 @@ export default function TaskEasyApp() {
               {showForm && (
                 <CardContent>
                   <TaskForm
-                    onSubmit={editingTask ? (data) => updateTask(editingTask.id, data) : addTask}
+                    onSubmit={
+                      editingTask
+                        ? (data) => updateTask(editingTask.id, data)
+                        : addTask
+                    }
                     onCancel={handleCancelEdit}
                     initialData={editingTask}
                     isEditing={!!editingTask}
@@ -137,25 +174,51 @@ export default function TaskEasyApp() {
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="all">All Tasks ({tasks.length})</TabsTrigger>
-            <TabsTrigger value="to-do">To Do ({todoTasks.length})</TabsTrigger>
-            <TabsTrigger value="in-progress">In Progress ({inProgressTasks.length})</TabsTrigger>
-            <TabsTrigger value="done">Done ({doneTasks.length})</TabsTrigger>
+            <TabsTrigger value="to-do">
+              To Do ({todoTasks.length})
+            </TabsTrigger>
+            <TabsTrigger value="in-progress">
+              In Progress ({inProgressTasks.length})
+            </TabsTrigger>
+            <TabsTrigger value="done">
+              Done ({doneTasks.length})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="mt-6">
-            <TaskList tasks={sortedTasks} onEdit={handleEdit} onDelete={deleteTask} title="All Tasks" />
+            <TaskList
+              tasks={sortedTasks}
+              onEdit={handleEdit}
+              onDelete={deleteTask}
+              title="All Tasks"
+            />
           </TabsContent>
 
           <TabsContent value="to-do" className="mt-6">
-            <TaskList tasks={todoTasks} onEdit={handleEdit} onDelete={deleteTask} title="To Do Tasks" />
+            <TaskList
+              tasks={todoTasks}
+              onEdit={handleEdit}
+              onDelete={deleteTask}
+              title="To Do Tasks"
+            />
           </TabsContent>
 
           <TabsContent value="in-progress" className="mt-6">
-            <TaskList tasks={inProgressTasks} onEdit={handleEdit} onDelete={deleteTask} title="In Progress Tasks" />
+            <TaskList
+              tasks={inProgressTasks}
+              onEdit={handleEdit}
+              onDelete={deleteTask}
+              title="In Progress Tasks"
+            />
           </TabsContent>
 
           <TabsContent value="done" className="mt-6">
-            <TaskList tasks={doneTasks} onEdit={handleEdit} onDelete={deleteTask} title="Completed Tasks" />
+            <TaskList
+              tasks={doneTasks}
+              onEdit={handleEdit}
+              onDelete={deleteTask}
+              title="Completed Tasks"
+            />
           </TabsContent>
         </Tabs>
       </div>
