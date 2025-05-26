@@ -1,25 +1,30 @@
-const nextJest = require("next/jest");
+const nextJest = require('next/jest')
 
 const createJestConfig = nextJest({
-  dir: "./",
-});
+  dir: './',
+})
 
 const customJestConfig = {
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-  testEnvironment: "jest-environment-jsdom",
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/$1",
+    '^@/(.*)$': '<rootDir>/$1',
+    '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
   },
   testMatch: [
-    "**/__tests__/**/*.{js,jsx,ts,tsx}",
-    "**/*.{test,spec}.{js,jsx,ts,tsx}"
+    '**/__tests__/**/*.{js,jsx,ts,tsx}',
+    '**/*.{test,spec}.{js,jsx,ts,tsx}',
   ],
+  collectCoverage: true,
   collectCoverageFrom: [
-    "components/**/*.{js,jsx,ts,tsx}",
-    "app/**/*.{js,jsx,ts,tsx}",
-    "!**/*.d.ts",
-    "!**/node_modules/**",
+    'components/**/*.{js,jsx,ts,tsx}',
+    'app/**/*.{js,jsx,ts,tsx}',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/.next/**',
   ],
+  coverageDirectory: '<rootDir>/coverage',
+  coverageReporters: ['json', 'lcov', 'text', 'clover'],
   coverageThreshold: {
     global: {
       branches: 0,
@@ -28,6 +33,6 @@ const customJestConfig = {
       statements: 0,
     },
   },
-};
+}
 
-module.exports = createJestConfig(customJestConfig);
+module.exports = createJestConfig(customJestConfig)
