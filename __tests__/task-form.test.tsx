@@ -2,15 +2,17 @@
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { TaskForm } from "@/components/task-form"
-import { jest } from "@jest/globals"
 import "@testing-library/jest-dom"
+import { jest } from "@jest/globals"
+
+// Create mock functions using global jest (no import needed)
+const mockOnSubmit = jest.fn()
+const mockOnCancel = jest.fn()
 
 describe("TaskForm", () => {
-  const mockOnSubmit = jest.fn()
-  const mockOnCancel = jest.fn()
-
   beforeEach(() => {
-    jest.clearAllMocks()
+    mockOnSubmit.mockClear()
+    mockOnCancel.mockClear()
   })
 
   test("renders form fields correctly", () => {
@@ -18,8 +20,8 @@ describe("TaskForm", () => {
 
     expect(screen.getByLabelText(/task title/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/priority/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/status/i)).toBeInTheDocument()
+    expect(screen.getByText("Priority")).toBeInTheDocument()
+    expect(screen.getByText("Status")).toBeInTheDocument()
   })
 
   test("shows validation errors for empty required fields", async () => {

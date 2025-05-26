@@ -1,11 +1,17 @@
 import { render, screen } from "@testing-library/react"
 import { TaskList } from "@/components/task-list"
-import "@testing-library/jest-dom"
 import { jest } from "@jest/globals"
+import "@testing-library/jest-dom"
+
+// Create mock functions using global jest (no import needed)
+const mockOnEdit = jest.fn()
+const mockOnDelete = jest.fn()
 
 describe("TaskList", () => {
-  const mockOnEdit = jest.fn()
-  const mockOnDelete = jest.fn()
+  beforeEach(() => {
+    mockOnEdit.mockClear()
+    mockOnDelete.mockClear()
+  })
 
   const sampleTasks = [
     {
