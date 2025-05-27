@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  workflow_dispatch:    # <--- ini yang ditambahkan
 
 jobs:
   test:
@@ -41,7 +42,7 @@ jobs:
         uses: codecov/codecov-action@v4
         if: matrix.node-version == '20.x'
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # Pastikan secret ini ada
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   deploy:
     name: Deploy to Vercel
